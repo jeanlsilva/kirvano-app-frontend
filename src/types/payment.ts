@@ -1,6 +1,6 @@
 export interface Payment {
     name: string;
-    number: string;
+    cardNumber: string;
     expirationMonth: number;
     expirationYear: number;
     cvc: string;

@@ -3,19 +3,24 @@ import Image from "next/image";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from "zod";
+import { completeCheckout } from "@/services/completeCheckout";
 
 export function PaymentSummary(props: any) {
     const schema = z.object({
         name: z.string().min(6, "Nome deve ter no mínimo 6 caracteres"),
-        number: z.string().min(1, "Número do cartão obrigatório")
+        cardNumber: z.string().min(1, "Número do cartão obrigatório")
             .length(16, "Número do cartão deve ter 16 caracteres numéricos"),
-        expirationMonth: z.number().max(12, "Mês deve ser de 1 a 12"),
-        expirationYear: z.number().max(99, "Ano deve ter 2 caracteres numéricos")
+        expirationMonth: z.number().max(12, "Mês deve ser de 1 a 12").min(1, "Mês deve ser de 1 a 12"),
+        expirationYear: z.number().max(99, "Ano deve ter 2 caracteres numéricos").min(0, "Ano não pode ser negativo")
             .min(Number(new Date().getFullYear().toString().slice(-2)), "Ano deve ser maior que ano atual"),
         cvc: z.string().min(1, "CVC é obrigatório").length(3, "CVC deve ter 3 caracteres numéricos")
     });
     const { register, handleSubmit, watch, formState: { errors }, } = useForm<Payment>({ resolver: zodResolver(schema) });
-    const onSubmit: SubmitHandler<Payment> = (data) => console.log(data);
+    const onSubmit: SubmitHandler<Payment> = (data) => {
+        completeCheckout(data)
+            .then((data) => console.log({ data }))
+            .catch((error) => console.log({ error }));
+    }
 
     return (
         <div className="bg-gray-100 rounded-md h-100 flex-1 px-10 pt-9 pb-20">
@@ -42,8 +47,8 @@ export function PaymentSummary(props: any) {
                     </div>
                     <div className="flex flex-col pb-6 relative">
                         <label htmlFor="number">Card number</label>
-                        <input type="text" {...register("number")} />
-                        <span className="text-sm text-red-600 absolute bottom-0">{errors.number?.message}</span>
+                        <input type="text" {...register("cardNumber")} />
+                        <span className="text-sm text-red-600 absolute bottom-0">{errors.cardNumber?.message}</span>
                     </div>
                     <div className="flex justify-between gap-4">
                         <div className="flex flex-col w-1/2">
