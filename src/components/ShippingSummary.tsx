@@ -1,6 +1,9 @@
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 
 export function ShippingSummary(props: any) {
+    const router = useRouter();
+
     return (
         <div className="bg-gray-100 rounded-md h-100 flex-1 px-10 pt-9 pb-20">
             <div className="flex justify-center items-center gap-6">
@@ -42,9 +45,14 @@ export function ShippingSummary(props: any) {
                         </div>
                     </div>
                 </form>
-                <div className="border-t border-y-gray-300 flex justify-end gap-4 mt-4 pt-6">
+                <div className="border-t border-y-gray-300 flex justify-end gap-4 mt-8 pt-9">
                     <button className="bg-transparent w-1/4">Cancel order</button>
-                    <button className="bg-cyan-600 text-white rounded-lg w-1/3 py-4">Payment</button>
+                    <button 
+                        className="bg-cyan-600 text-white rounded-lg w-1/3 py-4"
+                        onClick={() => router.push('/payment')}
+                    >
+                        Payment
+                    </button>
                 </div>
             </div>
         </div>
