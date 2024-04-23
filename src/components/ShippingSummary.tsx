@@ -58,7 +58,7 @@ export function ShippingSummary() {
             </div>
             <div className="px-10 mt-14">
                 <h3 className="font-semibold text-xl">Shipping Details</h3>
-                <div className="flex items-center gap-6">
+                <div className="flex flex-col md:flex-row md:items-center gap-2 md:gap-6 mt-2 md:mt-0">
                     <label htmlFor="address" className="flex-1 text-black">Use saved address</label>
                     <select name="address" className="flex-1" onChange={handleChangeSavedAddress}>
                         <option>Select</option>
@@ -68,7 +68,7 @@ export function ShippingSummary() {
                     </select>
                 </div>
                 <form onSubmit={handleSubmit(onSubmit)}>
-                    <div className="flex flex-col pb-6 relative">
+                    <div className="flex flex-col pb-6 relative mt-2 md:mt-0">
                         <label htmlFor="first_line">First line of address</label>
                         <input type="text" {...register("first_line")} />
                         <span className="text-sm text-red-600 absolute bottom-0">{errors.first_line?.message}</span>
@@ -78,8 +78,8 @@ export function ShippingSummary() {
                         <input type="text" {...register("street_name")} />
                         <span className="text-sm text-red-600 absolute bottom-0">{errors.street_name?.message}</span>
                     </div>
-                    <div className="flex gap-6 pb-6 relative">
-                        <div className="flex flex-col flex-1">
+                    <div className="flex flex-col md:flex-row gap-6 pb-0 md:pb-6">
+                        <div className="flex flex-col flex-1 relative pb-6">
                             <label htmlFor="postcode">Postcode</label>
                             <input type="text" {...register("postcode")} />
                             <span className="text-sm text-red-600 absolute bottom-0">{errors.postcode?.message}</span>
@@ -94,9 +94,9 @@ export function ShippingSummary() {
                         </div>
                     </div>
                     <div className="border-t border-y-gray-300 flex justify-end gap-4 mt-8 pt-9">
-                    <button className="bg-transparent w-1/4">Cancel order</button>
+                    <button className="bg-transparent w-full md:w-1/4">Cancel order</button>
                     <button 
-                        className="bg-cyan-600 text-white rounded-lg w-1/3 py-4"
+                        className="bg-cyan-600 text-white rounded-lg w-full md:w-1/3 py-4"
                         type="submit"
                     >
                         Payment

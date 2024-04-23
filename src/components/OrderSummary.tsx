@@ -21,7 +21,7 @@ export function OrderSummary() {
                 alt="product image" 
                 width={421} 
                 height={162} 
-                className="h-[162px] object-cover mt-5" 
+                className="h-[162px] w-full lg:w-[421px] object-cover mt-5 mx-auto" 
             />
             <div className="flex justify-between mt-4">
                 <div className="text-xl">
