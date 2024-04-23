@@ -1,4 +1,5 @@
-export interface Payment {
+export interface Card {
+    id?: number;
     name: string;
     cardNumber: string;
     expirationMonth: number;

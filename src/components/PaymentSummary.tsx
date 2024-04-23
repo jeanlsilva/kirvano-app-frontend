@@ -1,9 +1,18 @@
-import { Payment } from "@/types/payment";
 import Image from "next/image";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from "zod";
 import { completeCheckout } from "@/services/completeCheckout";
+import { Card } from "@/types/card";
+
+const orderDetails = {
+    product_name: "Sony wireless headphones",
+    product_avatar: "https://s3-alpha-sig.figma.com/img/735a/30f9/d22879500cd0828fd908b755c347e0ca?Expires=1714953600&Key-Pair-Id=APKAQ4GOSFWCVNEHN3O4&Signature=CB7AVJv8r5ATDrfyIbZ4wq8AMaleh~-HL~RpHvHRDK8EtKkDIpirTRNj2~eXpYeob7--yXwvWmiZqg3u4Y04dkxqGxAnxdrO3YviynEqrMcoLJ5PTensJK333Udcrm61AMT3KaMhIBMGf1bBl~9p90W8Wf~8RmGf3qJIZFqqhVBTsjcO~PN-Niip~NNfflzCuNNf9Uzm0f9C13ZSEo0A2fwK0DL9q3wP7GV5a6hsiE8mjkT1mr~X~KkAB1PnNmKEB4q1tfuPPDwA2ALPb16egqvadFXHVqAKKLwOX6aPJ8D5NjBUeH4~EKrYMixU3qHbeAaoYphReyZyMn~qL6tewA__",
+    subtotal: 316.55,
+    tax: 3.45,
+    shipping_fee: 0,
+    total: 320.45
+}
 
 export function PaymentSummary(props: any) {
     const schema = z.object({
@@ -15,9 +24,17 @@ export function PaymentSummary(props: any) {
             .min(Number(new Date().getFullYear().toString().slice(-2)), "Ano deve ser maior que ano atual"),
         cvc: z.string().min(1, "CVC é obrigatório").length(3, "CVC deve ter 3 caracteres numéricos")
     });
-    const { register, handleSubmit, watch, formState: { errors }, } = useForm<Payment>({ resolver: zodResolver(schema) });
-    const onSubmit: SubmitHandler<Payment> = (data) => {
-        completeCheckout(data)
+    const { register, handleSubmit, watch, formState: { errors }, } = useForm<Card>({ resolver: zodResolver(schema) });
+    const onSubmit: SubmitHandler<Card> = (data) => {
+        completeCheckout({
+            ...orderDetails,
+            card: data,
+            address: {
+                firstLine: "123",
+                streetName: "Electric Avenue",
+                postcode: "ABC - 123"
+            },
+        })
             .then((data) => console.log({ data }))
             .catch((error) => console.log({ error }));
     }
