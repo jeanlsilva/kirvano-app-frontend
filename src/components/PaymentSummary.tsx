@@ -5,18 +5,9 @@ import { z } from "zod";
 import { completeCheckout } from "@/services/completeCheckout";
 import { Card } from "@/types/card";
 import { ChangeEvent, useEffect, useRef, useState } from "react";
-import { Address } from "@/types/address";
 import { useSearchParams } from "next/navigation";
 import { getSavedCards } from "@/services/getSavedCards";
-
-const orderDetails = {
-    product_name: "Sony wireless headphones",
-    product_avatar: "https://s3-alpha-sig.figma.com/img/735a/30f9/d22879500cd0828fd908b755c347e0ca?Expires=1714953600&Key-Pair-Id=APKAQ4GOSFWCVNEHN3O4&Signature=CB7AVJv8r5ATDrfyIbZ4wq8AMaleh~-HL~RpHvHRDK8EtKkDIpirTRNj2~eXpYeob7--yXwvWmiZqg3u4Y04dkxqGxAnxdrO3YviynEqrMcoLJ5PTensJK333Udcrm61AMT3KaMhIBMGf1bBl~9p90W8Wf~8RmGf3qJIZFqqhVBTsjcO~PN-Niip~NNfflzCuNNf9Uzm0f9C13ZSEo0A2fwK0DL9q3wP7GV5a6hsiE8mjkT1mr~X~KkAB1PnNmKEB4q1tfuPPDwA2ALPb16egqvadFXHVqAKKLwOX6aPJ8D5NjBUeH4~EKrYMixU3qHbeAaoYphReyZyMn~qL6tewA__",
-    subtotal: 316.55,
-    tax: 3.45,
-    shipping_fee: 0,
-    total: 320.45
-}
+import orderDetails from '@/mockData/orderDetails.json'
 
 export function PaymentSummary(props: any) {
     const params = useSearchParams();
