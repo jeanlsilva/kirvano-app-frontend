@@ -1,26 +1,56 @@
+import { createAddress } from "@/services/createAddress";
+import { getAddresses } from "@/services/getAddresses";
 import { Address } from "@/types/address";
 import { zodResolver } from "@hookform/resolvers/zod";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
+import { ChangeEvent, useEffect, useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { z } from "zod";
 
-export function ShippingSummary(props: any) {
+export function ShippingSummary() {
+    const [savedAddresses, setSavedAddresses] = useState<Address[]>([]);
+    const [selectedAddressId, setSelectedAddressId] = useState<number | undefined>(undefined);
     const router = useRouter();
     const schema = z.object({
-        firstLine: z.string().min(6, "Campo deve ter no mínimo 6 caracteres"),
-        streetName: z.string().min(6, "Campo deve ter no mínimo 6 caracteres"),
+        first_line: z.string().min(6, "Campo deve ter no mínimo 6 caracteres"),
+        street_name: z.string().min(6, "Campo deve ter no mínimo 6 caracteres"),
         postcode: z.string().min(4, "Campo deve ter no mínimo 4 caracteres")
     });
-    const { register, handleSubmit, watch, formState: { errors }, } = useForm<Address>({ resolver: zodResolver(schema) });
+    const { register, handleSubmit, watch, formState: { errors }, setValue } = useForm<Address>({ resolver: zodResolver(schema) });
     const onSubmit: SubmitHandler<Address> = (data) => {
-        console.log({ data })
+        if (selectedAddressId) {
+            router.push(`/payment?address_id=${selectedAddressId}`)
+        } else {
+            createAddress(data)
+            .then((data) => router.push(`/payment?address_id=${data.id}`))
+            .catch((error) => console.log({ error }))
+        }
     }
+
+    const handleChangeSavedAddress = async (e: ChangeEvent<HTMLSelectElement>) => {
+        setSelectedAddressId(e.target?.value ? +e.target.value : undefined);
+        const selectedAddress = savedAddresses.find((address) => address.id === +e.target.value);
+        if (selectedAddress) {
+            setValue("first_line", selectedAddress.first_line);
+            setValue("street_name", selectedAddress.street_name);
+            setValue("postcode", selectedAddress.postcode);
+        }
+    }
+
+    useEffect(() => {
+        async function loadAddresses() {
+            const response = await getAddresses();
+            setSavedAddresses(response)
+        }
+
+        if (savedAddresses.length === 0) loadAddresses()
+    }, []);
 
     return (
         <div className="bg-gray-100 rounded-md h-100 flex-1 px-10 pt-9 pb-20">
             <div className="flex justify-center items-center gap-6">
-                <span className="text-cyan-600">Shipping</span>
+                <a className="text-cyan-600 no-underline" href="/shipping">Shipping</a>
                 <div className="bg-cyan-600 h-[1px] w-[25px]"></div>
                 <Image src="/images/check.svg" alt="check" width={24} height={24} />
                 <div className="bg-cyan-600 h-[1px] w-[25px]"></div>
@@ -30,20 +60,23 @@ export function ShippingSummary(props: any) {
                 <h3 className="font-semibold text-xl">Shipping Details</h3>
                 <div className="flex items-center gap-6">
                     <label htmlFor="address" className="flex-1 text-black">Use saved address</label>
-                    <select name="address" className="flex-1">
-                        <option>123, Electric avenue</option>
+                    <select name="address" className="flex-1" onChange={handleChangeSavedAddress}>
+                        <option>Select</option>
+                        {savedAddresses.map((address) => (
+                            <option key={address.id} value={address.id}>{address.first_line}</option>
+                        ))}
                     </select>
                 </div>
                 <form onSubmit={handleSubmit(onSubmit)}>
                     <div className="flex flex-col pb-6 relative">
-                        <label htmlFor="firstLine">First line of address</label>
-                        <input type="text" {...register("firstLine")} />
-                        <span className="text-sm text-red-600 absolute bottom-0">{errors.firstLine?.message}</span>
+                        <label htmlFor="first_line">First line of address</label>
+                        <input type="text" {...register("first_line")} />
+                        <span className="text-sm text-red-600 absolute bottom-0">{errors.first_line?.message}</span>
                     </div>
                     <div className="flex flex-col pb-6 relative">
-                        <label htmlFor="streetName">Street name</label>
-                        <input type="text" {...register("streetName")} />
-                        <span className="text-sm text-red-600 absolute bottom-0">{errors.streetName?.message}</span>
+                        <label htmlFor="street_name">Street name</label>
+                        <input type="text" {...register("street_name")} />
+                        <span className="text-sm text-red-600 absolute bottom-0">{errors.street_name?.message}</span>
                     </div>
                     <div className="flex gap-6 pb-6 relative">
                         <div className="flex flex-col flex-1">

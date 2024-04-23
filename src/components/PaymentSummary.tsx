@@ -4,6 +4,10 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from "zod";
 import { completeCheckout } from "@/services/completeCheckout";
 import { Card } from "@/types/card";
+import { ChangeEvent, useEffect, useRef, useState } from "react";
+import { Address } from "@/types/address";
+import { useSearchParams } from "next/navigation";
+import { getSavedCards } from "@/services/getSavedCards";
 
 const orderDetails = {
     product_name: "Sony wireless headphones",
@@ -15,34 +19,68 @@ const orderDetails = {
 }
 
 export function PaymentSummary(props: any) {
+    const params = useSearchParams();
+    const [savedCards, setSavedCards] = useState<Card[]>([]);
+    const [selectedCardId, setSelectedCardId] = useState<number | undefined>(undefined);
+    const savedCardRef = useRef<HTMLSelectElement | null>(null);
     const schema = z.object({
         name: z.string().min(6, "Nome deve ter no mínimo 6 caracteres"),
-        cardNumber: z.string().min(1, "Número do cartão obrigatório")
+        number: z.string().min(1, "Número do cartão obrigatório")
             .length(16, "Número do cartão deve ter 16 caracteres numéricos"),
-        expirationMonth: z.number().max(12, "Mês deve ser de 1 a 12").min(1, "Mês deve ser de 1 a 12"),
-        expirationYear: z.number().max(99, "Ano deve ter 2 caracteres numéricos").min(0, "Ano não pode ser negativo")
+        expiry_month: z.number().max(12, "Mês deve ser de 1 a 12").min(1, "Mês deve ser de 1 a 12"),
+        expiry_year: z.number().max(99, "Ano deve ter 2 caracteres numéricos").min(0, "Ano não pode ser negativo")
             .min(Number(new Date().getFullYear().toString().slice(-2)), "Ano deve ser maior que ano atual"),
         cvc: z.string().min(1, "CVC é obrigatório").length(3, "CVC deve ter 3 caracteres numéricos")
     });
-    const { register, handleSubmit, watch, formState: { errors }, } = useForm<Card>({ resolver: zodResolver(schema) });
+    const { register, handleSubmit, formState: { errors }, setValue } = useForm<Card>({ resolver: zodResolver(schema) });
     const onSubmit: SubmitHandler<Card> = (data) => {
-        completeCheckout({
-            ...orderDetails,
-            card: data,
-            address: {
-                firstLine: "123",
-                streetName: "Electric Avenue",
-                postcode: "ABC - 123"
-            },
-        })
-            .then((data) => console.log({ data }))
-            .catch((error) => console.log({ error }));
+        if (params.get("address_id")) {
+            completeCheckout({
+                ...orderDetails,
+                card: selectedCardId ? undefined : data,
+                card_id: selectedCardId,
+                address_id: Number(params.get("address_id"))
+            })
+                .then((data) => {
+                    alert(data.message);
+                    setValue("name", "");
+                    setValue("number", "");
+                    setValue("expiry_month", "");
+                    setValue("expiry_year", "");
+                    setValue("cvc", "");
+                    if (savedCardRef.current) {
+                        savedCardRef.current.value = "";
+                    }
+                })
+        }
     }
+    
+    const handleChangeSavedCard = (e: ChangeEvent<HTMLSelectElement>) => {
+        setSelectedCardId(+e.target.value)
+        const selectedCard = savedCards.find((card) => card.id === +e.target.value);
+        if (selectedCard) {
+            setValue("name", selectedCard.name);
+            setValue("number", selectedCard.number);
+            setValue("expiry_month", selectedCard.expiry_month);
+            setValue("expiry_year", String(selectedCard.expiry_year).slice(-2));
+            setValue("cvc", selectedCard.cvc);
+        }
+    }
+
+    useEffect(() => {
+        async function getCards() {
+            const data = await getSavedCards();
+
+            setSavedCards(data);
+        }
+
+        if (savedCards.length === 0) getCards();
+    })
 
     return (
         <div className="bg-gray-100 rounded-md h-100 flex-1 px-10 pt-9 pb-20">
             <div className="flex justify-center items-center gap-6">
-                <span className="text-cyan-600">Shipping</span>
+                <a className="text-cyan-600 no-underline" href="/shipping">Shipping</a>
                 <div className="bg-cyan-600 h-[1px] w-[25px]"></div>
                 <Image src="/images/check.svg" alt="check" width={24} height={24} />
                 <div className="bg-cyan-600 h-[1px] w-[25px]"></div>
@@ -52,8 +90,13 @@ export function PaymentSummary(props: any) {
                 <h3 className="font-semibold text-xl">Payment Details</h3>
                 <div className="flex items-center gap-6">
                     <label htmlFor="savedCard" className="flex-1 text-black">Use saved card</label>
-                    <select name="savedCard" className="flex-1">
-                        <option>Mastercard ending 234</option>
+                    <select name="savedCard" className="flex-1" onChange={handleChangeSavedCard} ref={savedCardRef}>
+                        <option value="">Select</option>
+                        {savedCards.map((card) => (
+                            <option key={card.id} value={card.id}>
+                                {`Card ending with ${card.number.slice(-4)}`}
+                            </option>
+                        ))}
                     </select>
                 </div>
                 <form onSubmit={handleSubmit(onSubmit)}>
@@ -64,31 +107,29 @@ export function PaymentSummary(props: any) {
                     </div>
                     <div className="flex flex-col pb-6 relative">
                         <label htmlFor="number">Card number</label>
-                        <input type="text" {...register("cardNumber")} />
-                        <span className="text-sm text-red-600 absolute bottom-0">{errors.cardNumber?.message}</span>
+                        <input type="text" {...register("number")} />
+                        <span className="text-sm text-red-600 absolute bottom-0">{errors.number?.message}</span>
                     </div>
                     <div className="flex justify-between gap-4">
                         <div className="flex flex-col w-1/2">
-                            <label htmlFor="expirationMonth">Expiration</label>
+                            <label htmlFor="expiry_month">Expiration</label>
                             <div className="flex items-center gap-4">
                                 <div className="w-full pb-10 relative flex flex-col">
                                     <input 
-                                        type="number" 
                                         className="w-full text-center" 
                                         required
-                                        {...register("expirationMonth", { valueAsNumber: true })} 
+                                        {...register("expiry_month", { valueAsNumber: true })} 
                                     />
-                                    <span className="text-sm text-red-600 absolute bottom-0">{errors.expirationMonth?.message}</span>
+                                    <span className="text-sm text-red-600 absolute bottom-0">{errors.expiry_month?.message}</span>
                                 </div>
                                 <span className="text-2xl">/</span>
                                 <div className="w-full pb-10 relative flex flex-col">
                                     <input 
-                                        type="number" 
                                         className="w-full text-center" 
                                         required
-                                        {...register("expirationYear", { valueAsNumber: true })} 
+                                        {...register("expiry_year", { valueAsNumber: true })} 
                                     />
-                                    <span className="text-sm text-red-600 absolute bottom-0">{errors.expirationYear?.message}</span>
+                                    <span className="text-sm text-red-600 absolute bottom-0">{errors.expiry_year?.message}</span>
                                 </div>
                             </div>
                         </div>

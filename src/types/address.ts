@@ -1,6 +1,6 @@
 export interface Address {
     id?: number;
-    firstLine: string;
-    streetName: string;
+    first_line: string;
+    street_name: string;
     postcode: string;
 }

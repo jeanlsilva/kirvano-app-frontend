@@ -1,4 +1,3 @@
-import { Address } from "./address";
 import { Card } from "./card";
 
 export interface Checkout {
@@ -8,6 +7,7 @@ export interface Checkout {
     tax: number;
     shipping_fee: number;
     total: number;
-    card: Card;
-    address: Address;
+    address_id: number;
+    card?: Card;
+    card_id?: number;
 }

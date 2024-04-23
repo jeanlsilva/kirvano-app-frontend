@@ -1,8 +1,8 @@
 export interface Card {
     id?: number;
     name: string;
-    cardNumber: string;
-    expirationMonth: number;
-    expirationYear: number;
+    number: string;
+    expiry_month: string;
+    expiry_year: string;
     cvc: string;
 }
