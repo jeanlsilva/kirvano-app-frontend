@@ -13,9 +13,9 @@ export function ShippingSummary() {
     const [selectedAddressId, setSelectedAddressId] = useState<number | undefined>(undefined);
     const router = useRouter();
     const schema = z.object({
-        first_line: z.string().min(6, "Campo deve ter no mínimo 6 caracteres"),
-        street_name: z.string().min(6, "Campo deve ter no mínimo 6 caracteres"),
-        postcode: z.string().min(4, "Campo deve ter no mínimo 4 caracteres")
+        first_line: z.string().min(6, "Min 6 characters"),
+        street_name: z.string().min(6, "Min 6 characters"),
+        postcode: z.string().min(4, "Min 4 characters")
     });
     const { register, handleSubmit, watch, formState: { errors }, setValue } = useForm<Address>({ resolver: zodResolver(schema) });
     const onSubmit: SubmitHandler<Address> = (data) => {
