@@ -1,9 +1,20 @@
 import { Payment } from "@/types/payment";
 import Image from "next/image";
 import { useForm, SubmitHandler } from "react-hook-form";
+import { zodResolver } from '@hookform/resolvers/zod';
+import { z } from "zod";
 
 export function PaymentSummary(props: any) {
-    const { register, handleSubmit, watch, formState: { errors } } = useForm<Payment>();
+    const schema = z.object({
+        name: z.string().min(6, "Nome deve ter no mínimo 6 caracteres"),
+        number: z.string().min(1, "Número do cartão obrigatório")
+            .length(16, "Número do cartão deve ter 16 caracteres numéricos"),
+        expirationMonth: z.number().max(12, "Mês deve ser de 1 a 12"),
+        expirationYear: z.number().max(99, "Ano deve ter 2 caracteres numéricos")
+            .min(Number(new Date().getFullYear().toString().slice(-2)), "Ano deve ser maior que ano atual"),
+        cvc: z.string().min(1, "CVC é obrigatório").length(3, "CVC deve ter 3 caracteres numéricos")
+    });
+    const { register, handleSubmit, watch, formState: { errors }, } = useForm<Payment>({ resolver: zodResolver(schema) });
     const onSubmit: SubmitHandler<Payment> = (data) => console.log(data);
 
     return (
@@ -24,29 +35,48 @@ export function PaymentSummary(props: any) {
                     </select>
                 </div>
                 <form onSubmit={handleSubmit(onSubmit)}>
-                    <div className="flex flex-col mt-4">
+                    <div className="flex flex-col mt-4 pb-6 relative">
                         <label htmlFor="name">Name on card</label>
                         <input type="text" {...register("name")} />
+                        <span className="text-sm text-red-600 absolute bottom-0">{errors.name?.message}</span>
                     </div>
-                    <div className="flex flex-col mt-4">
+                    <div className="flex flex-col pb-6 relative">
                         <label htmlFor="number">Card number</label>
                         <input type="text" {...register("number")} />
+                        <span className="text-sm text-red-600 absolute bottom-0">{errors.number?.message}</span>
                     </div>
-                    <div className="flex justify-between mt-4 gap-4">
+                    <div className="flex justify-between gap-4">
                         <div className="flex flex-col w-1/2">
                             <label htmlFor="expirationMonth">Expiration</label>
                             <div className="flex items-center gap-4">
-                                <input type="number" max={12} className="w-full text-center" {...register("expirationMonth")} />
+                                <div className="w-full pb-10 relative flex flex-col">
+                                    <input 
+                                        type="number" 
+                                        className="w-full text-center" 
+                                        required
+                                        {...register("expirationMonth", { valueAsNumber: true })} 
+                                    />
+                                    <span className="text-sm text-red-600 absolute bottom-0">{errors.expirationMonth?.message}</span>
+                                </div>
                                 <span className="text-2xl">/</span>
-                                <input type="number" max={99} className="w-full text-center" {...register("expirationYear")} />
+                                <div className="w-full pb-10 relative flex flex-col">
+                                    <input 
+                                        type="number" 
+                                        className="w-full text-center" 
+                                        required
+                                        {...register("expirationYear", { valueAsNumber: true })} 
+                                    />
+                                    <span className="text-sm text-red-600 absolute bottom-0">{errors.expirationYear?.message}</span>
+                                </div>
                             </div>
                         </div>
-                        <div className="flex flex-col flex-1">
+                        <div className="flex flex-col flex-1 relative">
                             <label htmlFor="cvc">CVC</label>
                             <input type="number" maxLength={3} {...register("cvc")} />
+                            <span className="text-sm text-red-600 absolute bottom-0">{errors.cvc?.message}</span>
                         </div>
                     </div>
-                    <div className="border-t border-y-gray-300 flex justify-end gap-4 mt-8 pt-9">
+                    <div className="border-t border-y-gray-300 flex justify-end gap-4 pt-9">
                     <button className="bg-transparent w-1/4">Cancel order</button>
                     <button type="submit" className="bg-cyan-600 text-white rounded-lg w-1/3 py-4">Complete order</button>
                 </div>
