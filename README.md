@@ -22,6 +22,8 @@ A aplicação foi desenvolvida utilizando as boas práticas do React, com separa
 
 A estilização, feita com Tailwind, adota o conceito `CSS-in-JS`, o que unifica estilo e estrutura em um só arquivo facilitando encontrar estilizações específicas de elementos. Foram utilizadas cores customizadas na aplicacão definidas no arquivo tailwind.config.ts. Também importante mencionar que todas as páginas estão 100% resposivas, funcionando adequadamente em qualquer largura de dispositivo.
 
+Com relação às requisições ao backend, conforme determinado na especificação do projeto, é adicionado um access token como query param para que possam ser devidamente recebidas e processadas. O valor do access token é armazenado no arquivo `.env` como `NEXT_PUBLIC_ACCESS_TOKEN`, e a URL do backend é definida como `NEXT_PUBLIC_API_URL`.
+
 ### Tecnologias Utilizadas
 
 O projeto foi desenvolvido com Next.js na versão 14.2.2, React versão 18, Tailwind versão 3.4.1, React Hook Form versão 7.51.3, e Zod versão 3.23.3.
