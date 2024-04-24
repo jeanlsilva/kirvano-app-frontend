@@ -36,13 +36,15 @@ export function PaymentSummary(props: any) {
             })
                 .then((data) => {
                     alert(data.message);
-                    setValue("name", "");
-                    setValue("number", "");
-                    setValue("expiry_month", "");
-                    setValue("expiry_year", "");
-                    setValue("cvc", "");
-                    if (savedCardRef.current) {
-                        savedCardRef.current.value = "";
+                    if (data.statusCode === 200) {
+                        setValue("name", "");
+                        setValue("number", "");
+                        setValue("expiry_month", "");
+                        setValue("expiry_year", "");
+                        setValue("cvc", "");
+                        if (savedCardRef.current) {
+                            savedCardRef.current.value = "";
+                        }
                     }
                 })
         }
