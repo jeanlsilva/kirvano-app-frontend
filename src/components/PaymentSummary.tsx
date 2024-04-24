@@ -84,7 +84,7 @@ export function PaymentSummary(props: any) {
             <div className="px-4 md:px-10 mt-14">
                 <h3 className="font-semibold text-xl">Payment Details</h3>
                 <div className="flex flex-col md:flex-row md:items-center gap-6">
-                    <label htmlFor="savedCard" className="flex-1 text-black">Use saved card</label>
+                    <span className="flex-1 text-black">Use saved card</span>
                     <select name="savedCard" className="flex-1" onChange={handleChangeSavedCard} ref={savedCardRef}>
                         <option value="">Select</option>
                         {savedCards.map((card) => (

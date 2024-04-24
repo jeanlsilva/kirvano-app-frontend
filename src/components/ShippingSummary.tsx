@@ -59,7 +59,7 @@ export function ShippingSummary() {
             <div className="px-10 mt-14">
                 <h3 className="font-semibold text-xl">Shipping Details</h3>
                 <div className="flex flex-col md:flex-row md:items-center gap-2 md:gap-6 mt-2 md:mt-0">
-                    <label htmlFor="address" className="flex-1 text-black">Use saved address</label>
+                    <span className="flex-1 text-black">Use saved address</span>
                     <select name="address" className="flex-1" onChange={handleChangeSavedAddress}>
                         <option>Select</option>
                         {savedAddresses.map((address) => (
