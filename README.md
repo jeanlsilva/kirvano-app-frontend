@@ -28,7 +28,7 @@ O projeto foi desenvolvido com Next.js na versão 14.2.2, React versão 18, Tail
 
 ## Execução local do projeto
 
-Para executar o projeto localmente, após cloná-lo, abra o terminal e execute o comando `npm i`. Aguarde todas as dependências serem instaladas, e em seguite execute um desses comandos:
+Para executar o projeto localmente, após cloná-lo, abra o terminal e execute o comando `npm i`. Aguarde todas as dependências serem instaladas, e em seguida execute um desses comandos:
 
 ```bash
 npm run dev
