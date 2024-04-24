@@ -38,7 +38,7 @@ export function OrderSummary() {
                 <label htmlFor="giftCard" className="text-gray-600 text-sm">Gift Card / Discount code</label>
                 <div className="flex gap-4 items-center mt-4">
                     <input type="text" className="flex-1"></input>
-                    <button className="bg-transparent border-2 border-cyan-600 text-cyan-600 rounded-lg px-6 h-[59px]">
+                    <button className="bg-transparent border-2 border-cyan-600 text-cyan-600 hover:bg-cyan-600 hover:text-white ease-in-out duration-300 rounded-lg px-6 h-[59px]">
                         Apply
                     </button>
                 </div>

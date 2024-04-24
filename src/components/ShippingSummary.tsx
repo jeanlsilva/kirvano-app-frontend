@@ -94,10 +94,12 @@ export function ShippingSummary() {
                         </div>
                     </div>
                     <div className="border-t border-y-gray-300 flex justify-end gap-4 mt-8 pt-9">
-                    <button className="bg-transparent w-full md:w-1/4">Cancel order</button>
+                    <button type="button" className="bg-transparent w-full md:w-1/4 hover:text-cyan-600 ease-in-out duration-300">
+                        Cancel order
+                    </button>
                     <button 
-                        className="bg-cyan-600 text-white rounded-lg w-full md:w-1/3 py-4"
-                        type="submit"
+                        type="submit" 
+                        className="bg-cyan-600 hover:bg-cyan-700 ease-in-out duration-300 text-white rounded-lg w-full md:w-1/3 py-4"
                     >
                         Payment
                     </button>

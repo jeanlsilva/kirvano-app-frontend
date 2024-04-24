@@ -25,6 +25,7 @@ const config: Config = {
       "white": "#FFFFFF",
       "green-500": "#38B2AC",
       "cyan-600": "#3182CE",
+      "cyan-700": "#0f5ca5",
       "red-600": "#ff0000"
     }
   },
